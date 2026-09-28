@@ -10,7 +10,9 @@ module.exports = [
       'eslint.config.js',
       '.eslintrc.js',
       'node_modules/**',
-      'dist/**'
+      'dist/**',
+      'playwright-report/**',
+      'test-results/**'
     ]
   },
   js.configs.recommended,
@@ -37,6 +39,15 @@ module.exports = [
   },
   {
     files: ['jest.setup.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node
+      }
+    }
+  },
+  {
+    files: ['playwright.config.js', 'e2e-tests/**/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: {
