@@ -8,7 +8,7 @@ import App from '../src/App'
 jest.mock('axios')
 
 describe('<App />', () => {
-  it('fetches data', async () => {
+  it('fetches nothing', async () => {
     axiosMock.get.mockResolvedValueOnce(
       {
         data: {
