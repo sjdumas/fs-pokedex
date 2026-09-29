@@ -1,6 +1,6 @@
-# Full Stack open CI/CD
+# Full Stack Open CI/CD
 
-This repository is used for the CI/CD module of the Full Stack Open course
+This repository is used for the CI/CD module of the Full Stack Open course.
 
 ## Commands
 
@@ -11,3 +11,7 @@ Start by running `npm install` inside the project folder
 `npm run eslint` to run eslint
 `npm run build` to make a production build
 `npm run start-prod` to run your production build
+
+## Live Project Link
+
+You can view the project live at this link: [https://fso-pokedex-iod5.onrender.com/](https://fso-pokedex-iod5.onrender.com/)
