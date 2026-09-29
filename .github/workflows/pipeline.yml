@@ -25,3 +25,11 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: E2E tests
         run: npm run test:e2e
+
+  deploy:
+    needs: simple_deployment_pipeline
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deployment
+        run: curl --fail --silent --show-error -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"

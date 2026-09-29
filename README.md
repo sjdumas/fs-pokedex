@@ -1,6 +1,6 @@
 # Full Stack Open CI/CD
 
-This repository is used for the CI/CD module of the Full Stack Open course.
+This repository is used for the CI/CD module [ part11]( https://courses.mooc.fi/org/uh-cs/courses/full-stack-open-continuous-integration) of the Full Stack Open course.
 
 ## Commands
 
