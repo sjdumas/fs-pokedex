@@ -16,3 +16,4 @@ Start by running `npm install` inside the project folder
 
 You can view the project live at this link: [https://fso-pokedex-iod5.onrender.com/](https://fso-pokedex-iod5.onrender.com/)
 Testing the pull request pipeline
+More testing
