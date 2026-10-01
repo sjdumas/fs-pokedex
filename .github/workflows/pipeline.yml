@@ -31,7 +31,7 @@ jobs:
 
   deploy:
     needs: simple_deployment_pipeline
-    if: github.event_name == 'push'
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render deployment
@@ -39,7 +39,8 @@ jobs:
 
   tag_release:
     needs: [simple_deployment_pipeline, deploy]
-    if: github.event_name == 'push'
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+    runs-on: ubuntu-latest
     runs-on: ubuntu-latest
     permissions:
       contents: write
