@@ -15,5 +15,3 @@ Start by running `npm install` inside the project folder
 ## Live Project Link
 
 You can view the project live at this link: [https://fso-pokedex-iod5.onrender.com/](https://fso-pokedex-iod5.onrender.com/)
-Skip test
-Skip test
