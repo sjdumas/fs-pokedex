@@ -28,6 +28,18 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: E2E tests
         run: npm run test:e2e
+      - name: Notify Discord on failure
+        if: failure()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: failure
+          title: "Build failed"
+          description: |
+            Branch: `${{ github.ref_name }}`
+            Author: ${{ github.actor }}
+            Commit: [${{ github.event.pull_request.head.sha || github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.pull_request.head.sha || github.sha }})
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   deploy:
     needs: simple_deployment_pipeline
@@ -36,6 +48,17 @@ jobs:
     steps:
       - name: Trigger Render deployment
         run: curl --fail --silent --show-error -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+      - name: Notify Discord on successful deploy
+        if: success()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: success
+          title: "New version deployed"
+          nodetail: true
+          description: |
+            The app was deployed to production.
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   tag_release:
     needs: [simple_deployment_pipeline, deploy]
