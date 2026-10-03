@@ -9,27 +9,55 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+          cache: 'npm'
       - name: Install dependencies
         run: npm ci
       - name: Check style
         run: npm run eslint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Unit tests
+        run: npm test
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
       - name: Build
         run: npm run build
-      - name: Test
-        run: npm test
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - name: E2E tests
         run: npm run test:e2e
+
+  notify_failure:
+    needs: [lint, test, e2e]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
       - name: Notify Discord on failure
-        if: failure()
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
@@ -42,14 +70,18 @@ jobs:
             Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   deploy:
-    needs: simple_deployment_pipeline
+    needs: [lint, test, e2e]
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render deployment
         run: curl --fail --silent --show-error -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
+  notify_success:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
       - name: Notify Discord on successful deploy
-        if: success()
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
@@ -61,8 +93,7 @@ jobs:
             Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   tag_release:
-    needs: [simple_deployment_pipeline, deploy]
-    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+    needs: deploy
     runs-on: ubuntu-latest
     permissions:
       contents: write
